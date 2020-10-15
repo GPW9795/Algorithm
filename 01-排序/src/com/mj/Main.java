@@ -1,26 +1,26 @@
 package com.mj;
 
-import com.mj.sort.BubbleSort3;
-import com.mj.sort.HeapSort;
-import com.mj.sort.SelectionSort;
-import com.mj.sort.Sort;
+import com.mj.sort.*;
 import com.mj.tools.Asserts;
 import com.mj.tools.Integers;
-import com.mj.tools.Times;
+import java.util.Arrays;
 
 public class Main {
 
     public static void main(String[] args) {
         Integer[] array1 = Integers.random(10000, 1, 20000);
-        testSort(array1, new HeapSort(), new SelectionSort(), new BubbleSort3());
-//        Asserts.test(Integers.isAscOrder(array1));
-//        Asserts.test(Integers.isAscOrder(array2));
-//        Asserts.test(Integers.isAscOrder(array3));
+        testSort(array1, new SelectionSort(), new HeapSort(), new BubbleSort1(), new BubbleSort2(), new BubbleSort3());
     }
 
     static void testSort(Integer[] array, Sort... sorts) {
         for (Sort sort:sorts){
-            sort.sort(Integers.copy(array));
+            Integer[] newArray = Integers.copy(array);
+            sort.sort(newArray);
+            Asserts.test(Integers.isAscOrder(newArray));
+        }
+        Arrays.sort(sorts);
+
+        for (Sort sort:sorts){
             System.out.println(sort);
         }
     }

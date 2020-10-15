@@ -1,6 +1,6 @@
 package com.mj.sort;
 
-public class BubbleSort1 extends Sort {
+public class BubbleSort1<E extends Comparable<E>> extends Sort<E> {
 
     @Override
     protected void sort() {

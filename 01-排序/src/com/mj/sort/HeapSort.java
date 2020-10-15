@@ -1,6 +1,6 @@
 package com.mj.sort;
 
-public class HeapSort extends Sort {
+public class HeapSort<E extends Comparable<E>> extends Sort<E> {
     private int heapSize;
 
     @Override
@@ -20,19 +20,19 @@ public class HeapSort extends Sort {
     }
 
     private void siftDown(int index) {
-        Integer element = array[index];
+        E element = array[index];
 
         int half = heapSize >> 1;
         while (index < half) {
             int childIndex = (index << 1) + 1;
-            Integer child = array[childIndex];
+            E child = array[childIndex];
 
             int rightIndex = childIndex + 1;
-            if (rightIndex < heapSize && cmpElement(array[rightIndex], child) > 0) {
+            if (rightIndex < heapSize && cmp(array[rightIndex], child) > 0) {
                 child = array[childIndex = rightIndex];
             }
 
-            if (cmpElement(element, child) >= 0) break;
+            if (cmp(element, child) >= 0) break;
 
             array[index] = child;
             index = childIndex;
