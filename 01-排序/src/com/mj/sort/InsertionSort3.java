@@ -11,7 +11,7 @@ public class InsertionSort3<E extends Comparable<E>> extends Sort<E> {
     }
 
     /**
-     * 插入元素
+     * 将source位置的元素插入dest位置
      */
     private void insert(int source, int dest) {
         E v = array[source];
