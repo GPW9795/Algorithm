@@ -1,6 +1,8 @@
 package com.mj.sort;
 
-public class SelectionSort extends Sort{
+import java.awt.image.ImageProducer;
+
+public class SelectionSort extends Sort {
     @Override
     protected void sort() {
         for (int end = array.length - 1; end > 0; end--) {
@@ -8,13 +10,11 @@ public class SelectionSort extends Sort{
             int maxIndex = 0;
             for (int begin = 1; begin <= end; begin++) {
                 // <=保证稳定性
-                if (array[maxIndex] <= array[begin]){
+                if (cmp(maxIndex, begin) <= 0) {
                     maxIndex = begin;
                 }
             }
-            int tmp = array[maxIndex];
-            array[maxIndex] = array[end];
-            array[end] = tmp;
+            swap(maxIndex, end);
         }
     }
 }
