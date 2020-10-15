@@ -1,4 +1,20 @@
 package com.mj.sort;
 
-public class SelectionSort {
+public class SelectionSort extends Sort{
+    @Override
+    protected void sort() {
+        for (int end = array.length - 1; end > 0; end--) {
+            // 默认0位置最大
+            int maxIndex = 0;
+            for (int begin = 1; begin <= end; begin++) {
+                // <=保证稳定性
+                if (array[maxIndex] <= array[begin]){
+                    maxIndex = begin;
+                }
+            }
+            int tmp = array[maxIndex];
+            array[maxIndex] = array[end];
+            array[end] = tmp;
+        }
+    }
 }
