@@ -22,6 +22,8 @@ public class QuickSort<E extends Comparable<E>> extends Sort<E> {
      * 确定轴点位置
      */
     private int pivotIndex(int begin, int end) {
+        // 随机选择一个元素与begin交换
+        swap(begin, begin + (int) (Math.random() * (end - begin)));
         // 备份begin位置元素
         E pivot = array[begin];
         // 指向最后一个元素
