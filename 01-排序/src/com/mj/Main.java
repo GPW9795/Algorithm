@@ -9,12 +9,13 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String[] args) {
-        Integer[] array1 = Integers.random(10000, 1, 20000);
+        Integer[] array1 = Integers.random(20000, 1, 20000);
         testSort(array1, new SelectionSort(),
                 new HeapSort(),
                 new InsertionSort1(),
                 new InsertionSort2(),
                 new InsertionSort3(),
+                new MergeSort(),
                 new BubbleSort3());
 //        int[] array = {2, 4, 6, 8, 10};
 //        Asserts.test(BinarySearch.search(array, 5) == 2);
