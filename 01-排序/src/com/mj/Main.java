@@ -16,6 +16,7 @@ public class Main {
                 new InsertionSort2(),
                 new InsertionSort3(),
                 new MergeSort(),
+                new QuickSort(),
                 new BubbleSort3());
 //        int[] array = {2, 4, 6, 8, 10};
 //        Asserts.test(BinarySearch.search(array, 5) == 2);
