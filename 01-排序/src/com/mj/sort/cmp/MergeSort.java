@@ -1,4 +1,6 @@
-package com.mj.sort;
+package com.mj.sort.cmp;
+
+import com.mj.sort.Sort;
 
 public class MergeSort<E extends Comparable<E>> extends Sort<E> {
     private E[] leftArray;

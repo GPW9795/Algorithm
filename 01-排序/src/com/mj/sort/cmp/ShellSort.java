@@ -1,4 +1,6 @@
-package com.mj.sort;
+package com.mj.sort.cmp;
+
+import com.mj.sort.Sort;
 
 import java.util.ArrayList;
 import java.util.List;

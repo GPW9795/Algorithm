@@ -1,6 +1,8 @@
-package com.mj.sort;
+package com.mj.sort.cmp;
 
-public class BubbleSort3<E extends Comparable<E>> extends Sort<E>{
+import com.mj.sort.Sort;
+
+public class BubbleSort3<E extends Comparable<E>> extends Sort<E> {
     /**
      * 冒泡排序优化2
      * 记录最后一次交换的位置作为下一次的截止位置

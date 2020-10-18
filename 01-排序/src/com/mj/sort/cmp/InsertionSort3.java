@@ -1,6 +1,7 @@
-package com.mj.sort;
+package com.mj.sort.cmp;
 
 import com.mj.BinarySearch;
+import com.mj.sort.Sort;
 
 public class InsertionSort3<E extends Comparable<E>> extends Sort<E> {
     @Override
