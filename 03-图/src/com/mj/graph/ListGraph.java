@@ -6,17 +6,80 @@ public class ListGraph<V, E> implements Graph<V, E> {
     private Map<V, Vertex<V, E>> vertices = new HashMap<>();
     private Set<Edge<V, E>> edges = new HashSet<>();
 
+    /**
+     * 顶点
+     */
+    private static class Vertex<V, E> {
+        V value;
+        Set<Edge<V, E>> inEdges = new HashSet<>();
+        Set<Edge<V, E>> outEdges = new HashSet<>();
+
+        public Vertex(V value) {
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return Objects.equals(value, ((Vertex<V, E>) o).value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value == null ? 0 : value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value == null ? null : value.toString();
+        }
+    }
+
+    /**
+     * 边
+     */
+    private static class Edge<V, E> {
+        Vertex<V, E> from;
+        Vertex<V, E> to;
+        E weight;
+
+        public Edge(Vertex<V, E> from, Vertex<V, E> to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            Edge<V, E> edge = (Edge<V, E>) o;
+            return Objects.equals(from, edge.from) &&
+                    Objects.equals(to, edge.to);
+        }
+
+        @Override
+        public int hashCode() {
+            return from.hashCode() * 31 + to.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "Edge{" +
+                    "from=" + from +
+                    ", to=" + to +
+                    ", weight=" + weight +
+                    '}';
+        }
+    }
+
     public void print() {
-        System.out.println("【顶点】：");
+        System.out.println("【顶点】---------------------------");
         vertices.forEach((V key, Vertex<V, E> vertex) -> {
             System.out.println(vertex);
-            System.out.println("out-----------------------");
-            System.out.println(vertex.outEdges);
-            System.out.println("in------------------------");
-            System.out.println(vertex.inEdges);
+//            System.out.println("out-----------------------");
+//            System.out.println(vertex.outEdges);
+//            System.out.println("in------------------------");
+//            System.out.println(vertex.inEdges);
         });
 
-        System.out.println("【边】：");
+        System.out.println("【边】------------------------------");
         edges.forEach((Edge<V, E> edge) -> {
             System.out.println(edge);
         });
@@ -109,66 +172,27 @@ public class ListGraph<V, E> implements Graph<V, E> {
         }
     }
 
-    /**
-     * 顶点
-     */
-    private static class Vertex<V, E> {
-        V value;
-        Set<Edge<V, E>> inEdges = new HashSet<>();
-        Set<Edge<V, E>> outEdges = new HashSet<>();
-
-        public Vertex(V value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return Objects.equals(value, ((Vertex<V, E>) o).value);
-        }
-
-        @Override
-        public int hashCode() {
-            return value == null ? 0 : value.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return value == null ? null : value.toString();
-        }
-    }
-
-    /**
-     * 边
-     */
-    private static class Edge<V, E> {
-        Vertex<V, E> from;
-        Vertex<V, E> to;
-        E weight;
-
-        public Edge(Vertex<V, E> from, Vertex<V, E> to) {
-            this.from = from;
-            this.to = to;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            Edge<V, E> edge = (Edge<V, E>) o;
-            return Objects.equals(from, edge.from) &&
-                    Objects.equals(to, edge.to);
-        }
-
-        @Override
-        public int hashCode() {
-            return from.hashCode() * 31 + to.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return "Edge{" +
-                    "from=" + from +
-                    ", to=" + to +
-                    ", weight=" + weight +
-                    '}';
+    @Override
+    public void bfs(V begin) {
+        // 判断顶点是否存在
+        Vertex<V, E> beginVertex = vertices.get(begin);
+        if (beginVertex == null) return;
+        // 已遍历过的集合
+        Set<Vertex<V, E>> visitedVertices = new HashSet<>();
+        Queue<Vertex<V, E>> queue = new LinkedList<>();
+        // 添加顶点
+        queue.offer(beginVertex);
+        visitedVertices.add(beginVertex);
+        // 开始遍历
+        while (!queue.isEmpty()) {
+            Vertex<V, E> vertex = queue.poll();
+            System.out.println(vertex.value);
+            // 添加连接顶点
+            for (Edge<V, E> edge : vertex.outEdges) {
+                if (visitedVertices.contains(edge.to)) continue;
+                queue.offer(edge.to);
+                visitedVertices.add(edge.to);
+            }
         }
     }
 }
