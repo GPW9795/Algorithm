@@ -195,4 +195,13 @@ public class ListGraph<V, E> implements Graph<V, E> {
             }
         }
     }
+
+    @Override
+    public void dfs(V begin) {
+
+    }
+
+    private void dfs(){
+        
+    }
 }
