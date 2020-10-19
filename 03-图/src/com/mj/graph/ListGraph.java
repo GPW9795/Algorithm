@@ -7,6 +7,7 @@ public class ListGraph<V, E> implements Graph<V, E> {
     private Set<Edge<V, E>> edges = new HashSet<>();
 
     public void print() {
+        System.out.println("【顶点】：");
         vertices.forEach((V key, Vertex<V, E> vertex) -> {
             System.out.println(vertex);
             System.out.println("out-----------------------");
@@ -15,6 +16,7 @@ public class ListGraph<V, E> implements Graph<V, E> {
             System.out.println(vertex.inEdges);
         });
 
+        System.out.println("【边】：");
         edges.forEach((Edge<V, E> edge) -> {
             System.out.println(edge);
         });
@@ -38,7 +40,26 @@ public class ListGraph<V, E> implements Graph<V, E> {
 
     @Override
     public void removeVertex(V v) {
+        // 获取并删除顶点
+        Vertex<V, E> vertex = vertices.remove(v);
+        if (vertex == null) return;
 
+        // 删除从该节点出去的边
+        Iterator iteratorOut = vertex.outEdges.iterator();
+        while (iteratorOut.hasNext()) {
+            Edge<V, E> edge = (Edge<V, E>) iteratorOut.next();
+            edge.to.inEdges.remove(edge);
+            iteratorOut.remove(); // 将当前遍历的元素从集合中删掉
+            edges.remove(edge);
+        }
+        // 删除从该节点进去的边
+        Iterator iteratorIn = vertex.inEdges.iterator();
+        while (iteratorIn.hasNext()) {
+            Edge<V, E> edge = (Edge<V, E>) iteratorIn.next();
+            edge.from.outEdges.remove(edge);
+            iteratorIn.remove(); // 将当前遍历的元素从集合中删掉
+            edges.remove(edge);
+        }
     }
 
     @Override
@@ -76,9 +97,9 @@ public class ListGraph<V, E> implements Graph<V, E> {
     public void removeEdge(V from, V to) {
         // 判断顶点是否存在
         Vertex<V, E> fromVertex = vertices.get(from);
-        if (from == null) return;
+        if (fromVertex == null) return;
         Vertex<V, E> toVertex = vertices.get(to);
-        if (to == null) return;
+        if (toVertex == null) return;
 
         Edge<V, E> edge = new Edge<>(fromVertex, toVertex);
         // 删除原来的边
