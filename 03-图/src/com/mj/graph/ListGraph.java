@@ -173,7 +173,8 @@ public class ListGraph<V, E> implements Graph<V, E> {
     }
 
     @Override
-    public void bfs(V begin) {
+    public void bfs(V begin, VertexVisitor<V> visitor) {
+        if (visitor == null) return;
         // 判断顶点是否存在
         Vertex<V, E> beginVertex = vertices.get(begin);
         if (beginVertex == null) return;
@@ -186,7 +187,7 @@ public class ListGraph<V, E> implements Graph<V, E> {
         // 开始遍历
         while (!queue.isEmpty()) {
             Vertex<V, E> vertex = queue.poll();
-            System.out.println(vertex.value);
+            if (visitor.visit(vertex.value)) return;
             // 添加连接顶点
             for (Edge<V, E> edge : vertex.outEdges) {
                 if (visitedVertices.contains(edge.to)) continue;
@@ -200,34 +201,35 @@ public class ListGraph<V, E> implements Graph<V, E> {
      * 深度优先搜索的递归实现
      */
     @Override
-    public void dfs(V begin) {
+    public void dfs(V begin, VertexVisitor<V> visitor) {
+        if (visitor == null) return;
         // 判断顶点是否存在
         Vertex<V, E> beginVertex = vertices.get(begin);
         if (beginVertex == null) return;
-//        dfs(beginVertex, new HashSet<>());
-        dfs(beginVertex);
+//        dfs(beginVertex, new HashSet<>(), visitor);
+        dfs(beginVertex, visitor);
     }
 
-    private void dfs(Vertex<V, E> vertex, Set<Vertex<V, E>> visitedVertices) {
-        System.out.println(vertex.value);
+    private void dfs(Vertex<V, E> vertex, Set<Vertex<V, E>> visitedVertices, VertexVisitor<V> visitor) {
+        if (visitor.visit(vertex.value)) return;
         visitedVertices.add(vertex);
 
         for (Edge<V, E> edge : vertex.outEdges) {
             if (visitedVertices.contains(edge.to)) continue;
-            dfs(edge.to, visitedVertices);
+            dfs(edge.to, visitedVertices, visitor);
         }
     }
 
     /**
      * 深度优先搜索的非递归实现
      */
-    private void dfs(Vertex<V, E> beginVertex) {
+    private void dfs(Vertex<V, E> beginVertex, VertexVisitor<V> visitor) {
         Stack<Vertex<V, E>> stack = new Stack<>();
         Set<Vertex<V, E>> visitedVertices = new HashSet<>();
         // 先访问起点
         stack.push(beginVertex);
         visitedVertices.add(beginVertex);
-        System.out.println(beginVertex.value);
+        if (visitor.visit(beginVertex.value)) return;
 
         while (!stack.isEmpty()) {
             Vertex<V, E> vertex = stack.pop();
@@ -237,7 +239,7 @@ public class ListGraph<V, E> implements Graph<V, E> {
                 stack.push(edge.from);
                 stack.push(edge.to);
                 visitedVertices.add(edge.to);
-                System.out.println(edge.to.value);
+                if (visitor.visit(edge.to.value)) return;
                 break;
             }
         }

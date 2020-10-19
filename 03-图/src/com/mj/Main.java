@@ -1,6 +1,7 @@
 package com.mj;
 
 import com.mj.graph.Graph;
+import com.mj.graph.Graph.VertexVisitor;
 import com.mj.graph.ListGraph;
 
 public class Main {
@@ -11,12 +12,18 @@ public class Main {
 
     static void testBfs() {
         Graph<Object, Double> graph = directedGraph(Data.BFS_02);
-        graph.bfs(5);
+        graph.bfs(0, (Object o) -> {
+            System.out.println(o);
+            return false;
+        });
     }
 
     static void testDfs() {
-        Graph<Object, Double> graph = undirectedGraph(Data.DFS_01);
-        graph.dfs(1);
+        Graph<Object, Double> graph = directedGraph(Data.DFS_02);
+        graph.dfs("a", (Object o)->{
+            System.out.println(o);
+            return false;
+        });
     }
 
     /**
