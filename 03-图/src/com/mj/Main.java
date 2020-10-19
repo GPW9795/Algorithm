@@ -16,7 +16,7 @@ public class Main {
 
     static void testDfs() {
         Graph<Object, Double> graph = undirectedGraph(Data.DFS_01);
-        graph.dfs1(1);
+        graph.dfs(1);
     }
 
     /**

@@ -204,7 +204,8 @@ public class ListGraph<V, E> implements Graph<V, E> {
         // 判断顶点是否存在
         Vertex<V, E> beginVertex = vertices.get(begin);
         if (beginVertex == null) return;
-        dfs(beginVertex, new HashSet<>());
+//        dfs(beginVertex, new HashSet<>());
+        dfs(beginVertex);
     }
 
     private void dfs(Vertex<V, E> vertex, Set<Vertex<V, E>> visitedVertices) {
@@ -223,6 +224,7 @@ public class ListGraph<V, E> implements Graph<V, E> {
     private void dfs(Vertex<V, E> beginVertex) {
         Stack<Vertex<V, E>> stack = new Stack<>();
         Set<Vertex<V, E>> visitedVertices = new HashSet<>();
+        // 先访问起点
         stack.push(beginVertex);
         visitedVertices.add(beginVertex);
         System.out.println(beginVertex.value);
@@ -230,6 +232,7 @@ public class ListGraph<V, E> implements Graph<V, E> {
         while (!stack.isEmpty()) {
             Vertex<V, E> vertex = stack.pop();
             for (Edge<V, E> edge : vertex.outEdges) {
+                // 选择一条没有访问过的边
                 if (visitedVertices.contains(edge.to)) continue;
                 stack.push(edge.from);
                 stack.push(edge.to);
