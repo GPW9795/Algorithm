@@ -74,7 +74,18 @@ public class ListGraph<V, E> implements Graph<V, E> {
 
     @Override
     public void removeEdge(V from, V to) {
+        // 判断顶点是否存在
+        Vertex<V, E> fromVertex = vertices.get(from);
+        if (from == null) return;
+        Vertex<V, E> toVertex = vertices.get(to);
+        if (to == null) return;
 
+        Edge<V, E> edge = new Edge<>(fromVertex, toVertex);
+        // 删除原来的边
+        if (fromVertex.outEdges.remove(edge)) {
+            toVertex.inEdges.remove(edge);
+            edges.remove(edge);
+        }
     }
 
     /**
