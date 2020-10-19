@@ -4,10 +4,25 @@ import java.util.*;
 
 public class ListGraph<V, E> implements Graph<V, E> {
     private Map<V, Vertex<V, E>> vertices = new HashMap<>();
+    private Set<Edge<V, E>> edges = new HashSet<>();
+
+    public void print() {
+        vertices.forEach((V key, Vertex<V, E> vertex) -> {
+            System.out.println(vertex);
+            System.out.println("out-----------------------");
+            System.out.println(vertex.outEdges);
+            System.out.println("in------------------------");
+            System.out.println(vertex.inEdges);
+        });
+
+        edges.forEach((Edge<V, E> edge) -> {
+            System.out.println(edge);
+        });
+    }
 
     @Override
     public int edgeSize() {
-        return 0;
+        return edges.size();
     }
 
     @Override
@@ -44,11 +59,17 @@ public class ListGraph<V, E> implements Graph<V, E> {
             toVertex = new Vertex<>(to);
             vertices.put(to, toVertex);
         }
-        // 判断边是否存在
-        if (fromVertex.outEdges.contains(toVertex)) {
-
+        Edge<V, E> edge = new Edge<>(fromVertex, toVertex);
+        edge.weight = weight;
+        // 删除原来的边
+        if (fromVertex.outEdges.remove(edge)) {
+            toVertex.inEdges.remove(edge);
+            edges.remove(edge);
         }
-
+        // 添加新的边
+        edges.add(edge);
+        fromVertex.outEdges.add(edge);
+        toVertex.inEdges.add(edge);
     }
 
     @Override
@@ -56,6 +77,9 @@ public class ListGraph<V, E> implements Graph<V, E> {
 
     }
 
+    /**
+     * 顶点
+     */
     private static class Vertex<V, E> {
         V value;
         Set<Edge<V, E>> inEdges = new HashSet<>();
@@ -74,12 +98,25 @@ public class ListGraph<V, E> implements Graph<V, E> {
         public int hashCode() {
             return value == null ? 0 : value.hashCode();
         }
+
+        @Override
+        public String toString() {
+            return value == null ? null : value.toString();
+        }
     }
 
+    /**
+     * 边
+     */
     private static class Edge<V, E> {
         Vertex<V, E> from;
         Vertex<V, E> to;
         E weight;
+
+        public Edge(Vertex<V, E> from, Vertex<V, E> to) {
+            this.from = from;
+            this.to = to;
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -91,6 +128,15 @@ public class ListGraph<V, E> implements Graph<V, E> {
         @Override
         public int hashCode() {
             return from.hashCode() * 31 + to.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "Edge{" +
+                    "from=" + from +
+                    ", to=" + to +
+                    ", weight=" + weight +
+                    '}';
         }
     }
 }
