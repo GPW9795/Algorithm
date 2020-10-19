@@ -196,23 +196,47 @@ public class ListGraph<V, E> implements Graph<V, E> {
         }
     }
 
+    /**
+     * 深度优先搜索的递归实现
+     */
     @Override
     public void dfs(V begin) {
         // 判断顶点是否存在
         Vertex<V, E> beginVertex = vertices.get(begin);
         if (beginVertex == null) return;
-
-        Set<Vertex<V, E>> visitedVertices = new HashSet<>();
-        dfs(beginVertex, visitedVertices);
+        dfs(beginVertex, new HashSet<>());
     }
 
     private void dfs(Vertex<V, E> vertex, Set<Vertex<V, E>> visitedVertices) {
         System.out.println(vertex.value);
         visitedVertices.add(vertex);
+
         for (Edge<V, E> edge : vertex.outEdges) {
-            if (visitedVertices.contains(vertex)) continue;
+            if (visitedVertices.contains(edge.to)) continue;
             dfs(edge.to, visitedVertices);
         }
+    }
 
+    /**
+     * 深度优先搜索的非递归实现
+     */
+    private void dfs(Vertex<V, E> beginVertex) {
+        Stack<Vertex<V, E>> stack = new Stack<>();
+        Set<Vertex<V, E>> visitedVertices = new HashSet<>();
+        stack.push(beginVertex);
+        visitedVertices.add(beginVertex);
+        System.out.println(beginVertex.value);
+
+        while (!stack.isEmpty()) {
+            Vertex<V, E> vertex = stack.pop();
+            for (Edge<V, E> edge : vertex.outEdges) {
+                if (visitedVertices.contains(edge.to)) continue;
+                stack.push(edge.from);
+                stack.push(edge.to);
+                visitedVertices.add(edge.to);
+                System.out.println(edge.to.value);
+                break;
+            }
+        }
     }
 }

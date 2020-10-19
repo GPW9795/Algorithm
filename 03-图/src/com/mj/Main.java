@@ -6,12 +6,17 @@ import com.mj.graph.ListGraph;
 public class Main {
 
     public static void main(String[] args) {
-        testBfs();
+        testDfs();
     }
 
     static void testBfs() {
         Graph<Object, Double> graph = directedGraph(Data.BFS_02);
         graph.bfs(5);
+    }
+
+    static void testDfs() {
+        Graph<Object, Double> graph = undirectedGraph(Data.DFS_01);
+        graph.dfs1(1);
     }
 
     /**
