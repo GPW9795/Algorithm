@@ -1,10 +1,23 @@
 package com.mj.graph;
 
+import com.mj.MinHeap;
+import com.mj.UnionFind;
+
 import java.util.*;
 
-public class ListGraph<V, E> implements Graph<V, E> {
+public class ListGraph<V, E> extends Graph<V, E> {
     private Map<V, Vertex<V, E>> vertices = new HashMap<>();
     private Set<Edge<V, E>> edges = new HashSet<>();
+    private Comparator<Edge<V, E>> edgeComparator = (Edge<V, E> e1, Edge<V, E> e2) -> {
+        return weightManager.compare(e1.weight, e2.weight);
+    };
+
+    public ListGraph() {
+    }
+
+    public ListGraph(WeightManager<E> weightManager) {
+        super(weightManager);
+    }
 
     /**
      * 顶点
@@ -14,7 +27,7 @@ public class ListGraph<V, E> implements Graph<V, E> {
         Set<Edge<V, E>> inEdges = new HashSet<>();
         Set<Edge<V, E>> outEdges = new HashSet<>();
 
-        public Vertex(V value) {
+        Vertex(V value) {
             this.value = value;
         }
 
@@ -42,9 +55,13 @@ public class ListGraph<V, E> implements Graph<V, E> {
         Vertex<V, E> to;
         E weight;
 
-        public Edge(Vertex<V, E> from, Vertex<V, E> to) {
+        Edge(Vertex<V, E> from, Vertex<V, E> to) {
             this.from = from;
             this.to = to;
+        }
+
+        EdgeInfo<V, E> info() {
+            return new EdgeInfo<>(from.value, to.value, weight);
         }
 
         @Override
@@ -243,5 +260,98 @@ public class ListGraph<V, E> implements Graph<V, E> {
                 break;
             }
         }
+    }
+
+    @Override
+    public Set<EdgeInfo<V, E>> mst() {
+        return kruskal();
+    }
+
+    /**
+     * 最小生成树 - Prim算法
+     */
+    private Set<EdgeInfo<V, E>> prim() {
+        Iterator<Vertex<V, E>> it = vertices.values().iterator(); // 迭代器
+        if (!it.hasNext()) return null; // 图为空
+
+        Set<EdgeInfo<V, E>> edgeInfos = new HashSet<>();
+        Set<Vertex<V, E>> addedVertices = new HashSet<>();
+        Vertex<V, E> vertex = it.next(); // 随机拿到一个顶点
+        addedVertices.add(vertex);
+        MinHeap<Edge<V, E>> heap = new MinHeap<>(vertex.outEdges, edgeComparator);
+        int verticesSize = vertices.size();
+        while (!heap.isEmpty() && addedVertices.size() < verticesSize) {
+            Edge<V, E> edge = heap.remove();
+            if (addedVertices.contains(edge.to)) continue;
+
+            edgeInfos.add(edge.info());
+            addedVertices.add(edge.to);
+            heap.addAll(edge.to.outEdges);
+        }
+        return edgeInfos;
+    }
+
+    /**
+     * 最小生成树 - Kruskal算法
+     */
+    private Set<EdgeInfo<V, E>> kruskal() {
+        int edgeSize = vertices.size() - 1; // 最终边的数量
+        if (edgeSize == -1) return null;
+
+        Set<EdgeInfo<V, E>> edgeInfos = new HashSet<>(); // 放入所有的边
+        MinHeap<Edge<V, E>> heap = new MinHeap<>(edges, edgeComparator); // 初始化并查集
+        UnionFind<Vertex<V, E>> uf = new UnionFind<>();
+        vertices.forEach((V v, Vertex<V, E> vertex) -> {
+            uf.makeSet(vertex);
+        });
+
+        while (!heap.isEmpty() && edgeInfos.size() < edgeSize) {
+            Edge<V, E> edge = heap.remove();
+            if (uf.isSame(edge.from, edge.to)) continue;
+
+            edgeInfos.add(edge.info());
+            uf.union(edge.from, edge.to);
+        }
+        return edgeInfos;
+    }
+
+    /**
+     * 拓扑排序
+     */
+    @Override
+    public List<V> topologicalSort() {
+        // 最终拓扑排序的结果
+        List<V> list = new ArrayList<>();
+        // 度为0的队列
+        Queue<Vertex<V, E>> queue = new LinkedList<>();
+        // 存放入度的映射
+        Map<Vertex<V, E>, Integer> ins = new HashMap<>();
+
+        // 初始化，将度为0的顶点放入队列
+        vertices.forEach((V v, Vertex<V, E> vertex) -> {
+            Integer in = vertex.inEdges.size();
+            if (in == 0) {
+                queue.offer(vertex);
+            } else {
+                ins.put(vertex, in);
+            }
+        });
+
+        while (!queue.isEmpty()) {
+            Vertex<V, E> vertex = queue.poll();
+            // 放入返回结果
+            list.add(vertex.value);
+
+            for (Edge<V, E> edge : vertex.outEdges) {
+                int toIn = ins.get(edge.to) - 1;
+                if (toIn == 0) {
+                    queue.offer(edge.to);
+                } else {
+                    ins.put(edge.to, toIn);
+                }
+            }
+        }
+
+        return list;
     }
 }
