@@ -1,11 +1,11 @@
 package com.mj;
 
 import com.mj.graph.Graph;
-import com.mj.graph.Graph.EdgeInfo;
-import com.mj.graph.Graph.WeightManager;
+import com.mj.graph.Graph.*;
 import com.mj.graph.ListGraph;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Main {
@@ -19,10 +19,24 @@ public class Main {
         public Double add(Double w1, Double w2) {
             return w1 + w2;
         }
+
+        @Override
+        public Double zero() {
+            return 0.0;
+        }
     };
 
     public static void main(String[] args) {
-        testMst();
+        testShortestPath();
+    }
+
+    static void testShortestPath() {
+        Graph<Object, Double> graph = directedGraph(Data.NEGATIVE_WEIGHT2);
+        Map<Object, PathInfo<Object, Double>> map = graph.shortestPath(0);
+        if (map == null) return;
+        map.forEach((Object o, PathInfo<Object, Double> path) -> {
+            System.out.println(o + "-" + path);
+        });
     }
 
     static void testMst() {

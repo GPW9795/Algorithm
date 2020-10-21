@@ -357,53 +357,144 @@ public class ListGraph<V, E> extends Graph<V, E> {
     }
 
     @Override
-    public Map<V, E> shortestPath(V begin) {
+    public Map<V, PathInfo<V, E>> shortestPath(V begin) {
+        return bellmanFord(begin);
+    }
+
+    /**
+     * Dijkstra算法
+     *
+     * @param begin 起点
+     * @return 最短路径集合
+     */
+    private Map<V, PathInfo<V, E>> dijkstra(V begin) {
         Vertex<V, E> beginVertex = vertices.get(begin);
         if (beginVertex == null) return null;
 
-        Map<V, E> selectedPaths = new HashMap<>(); // 存放最短路径值
-        Map<Vertex<V, E>, E> paths = new HashMap<>(); // 中间值，每次挑选最小的
+        Map<V, PathInfo<V, E>> selectedPaths = new HashMap<>(); // 存放最短路径值
+        Map<Vertex<V, E>, PathInfo<V, E>> paths = new HashMap<>(); // 中间值，每次挑选最小的
         // 初始化paths
         for (Edge<V, E> edge : beginVertex.outEdges) {
-            paths.put(edge.to, edge.weight);
+            PathInfo<V, E> path = new PathInfo<>();
+            path.weight = edge.weight;
+            path.edgeInfos.add(edge.info());
+            paths.put(edge.to, path);
         }
 
         while (!paths.isEmpty()) {
             // minEntry离开桌面
-            Entry<Vertex<V, E>, E> minEntry = getMinPath(paths);
+            Entry<Vertex<V, E>, PathInfo<V, E>> minEntry = getMinPath(paths);
             Vertex<V, E> minVertex = minEntry.getKey();
-            selectedPaths.put(minVertex.value, minEntry.getValue());
+            PathInfo<V, E> minPath = minEntry.getValue();
+            selectedPaths.put(minVertex.value, minPath);
             paths.remove(minVertex);
             // 对minVertex的outEdges进行松弛操作
             for (Edge<V, E> edge : minVertex.outEdges) {
-                E newWeight = WeightManager.add(edge.weight,paths.get(edge.to));
-//                if (selectedPaths.containsKey(edge.to.value)) continue;
-//                paths.put(edge.to, edge.weight);
+                // 如果已经确定最短路径就没必要进行松弛操作
+                if (selectedPaths.containsKey(edge.to.value)) continue;
+                relaxForDijkstra(edge, minPath, paths);
             }
         }
-
+        // 删除起点
+        selectedPaths.remove(begin);
         return selectedPaths;
     }
 
     /**
-     * 松弛操作
+     * 松弛操作 - Dijkstra算法
+     *
+     * @param edge     需要被松弛的边
+     * @param fromPath edge.from的路径信息
+     * @param paths    存放其他点的最短路径信息
      */
-    private void relax() {
+    private void relaxForDijkstra(Edge<V, E> edge, PathInfo<V, E> fromPath, Map<Vertex<V, E>, PathInfo<V, E>> paths) {
+        // 新的最短路径beginVertex到edge.from到edge.to的最短路径
+        E newWeight = weightManager.add(fromPath.weight, edge.weight);
+        // 以前的beginVertex到edge.to的最短路径
+        PathInfo<V, E> oldPath = paths.get(edge.to);
+        if (oldPath != null && weightManager.compare(newWeight, oldPath.weight) >= 0) return;
 
+        if (oldPath == null) {
+            oldPath = new PathInfo<>();
+            paths.put(edge.to, oldPath);
+        } else {
+            oldPath.edgeInfos.clear();
+        }
+        oldPath.weight = newWeight;
+        oldPath.edgeInfos.addAll(fromPath.edgeInfos);
+        oldPath.edgeInfos.add(edge.info());
     }
 
     /**
-     * 从paths中挑选最小路径(顶点和权值）
+     * 从paths中挑选最小路径(顶点和权值）- Dijkstra算法
      */
-    private Entry<Vertex<V, E>, E> getMinPath(Map<Vertex<V, E>, E> paths) {
-        Iterator<Entry<Vertex<V, E>, E>> it = paths.entrySet().iterator();
-        Entry<Vertex<V, E>, E> minEntry = it.next();
+    private Entry<Vertex<V, E>, PathInfo<V, E>> getMinPath(Map<Vertex<V, E>, PathInfo<V, E>> paths) {
+        Iterator<Entry<Vertex<V, E>, PathInfo<V, E>>> it = paths.entrySet().iterator();
+        Entry<Vertex<V, E>, PathInfo<V, E>> minEntry = it.next();
         while (it.hasNext()) {
-            Entry<Vertex<V, E>, E> entry = it.next();
-            if (weightManager.compare(entry.getValue(), minEntry.getValue()) < 0) {
+            Entry<Vertex<V, E>, PathInfo<V, E>> entry = it.next();
+            if (weightManager.compare(entry.getValue().weight, minEntry.getValue().weight) < 0) {
                 minEntry = entry;
             }
         }
         return minEntry;
+    }
+
+    /**
+     * Bellman-Ford算法
+     *
+     * @param begin 起点
+     * @return 最短路径集合
+     */
+    private Map<V, PathInfo<V, E>> bellmanFord(V begin) {
+        Vertex<V, E> beginVertex = vertices.get(begin);
+        if (beginVertex == null) return null;
+
+        Map<V, PathInfo<V, E>> selectedPaths = new HashMap<>(); // 存放最短路径值
+        // 初始化起点的paths
+        PathInfo<V, E> beginPath = new PathInfo<>();
+        beginPath.weight = weightManager.zero();
+        selectedPaths.put(begin, beginPath);
+
+        int count = vertices.size() - 1;
+        for (int i = 0; i < count; i++) { // V - 1次
+            for (Edge<V, E> edge : edges) {
+                PathInfo<V, E> fromPath = selectedPaths.get(edge.from.value);
+                if (fromPath == null) continue; // 起点不存在最短路径信息
+                relaxForBellmanFord(edge, fromPath, selectedPaths);
+            }
+        }
+
+        // 检测负权环
+        for (Edge<V, E> edge : edges) {
+            PathInfo<V, E> fromPath = selectedPaths.get(edge.from.value);
+            if (fromPath == null) continue; // 起点不存在最短路径信息
+            if (relaxForBellmanFord(edge, fromPath, selectedPaths)) {
+                System.out.println("有负权环");
+                return null;
+            }
+        }
+
+        selectedPaths.remove(begin);
+        return selectedPaths;
+    }
+
+    private boolean relaxForBellmanFord(Edge<V, E> edge, PathInfo<V, E> fromPath, Map<V, PathInfo<V, E>> paths) {
+        // 新的最短路径beginVertex到edge.from到edge.to的最短路径
+        E newWeight = weightManager.add(fromPath.weight, edge.weight);
+        // 以前的beginVertex到edge.to的最短路径
+        PathInfo<V, E> oldPath = paths.get(edge.to.value);
+        if (oldPath != null && weightManager.compare(newWeight, oldPath.weight) >= 0) return false;
+
+        if (oldPath == null) {
+            oldPath = new PathInfo<>();
+            paths.put(edge.to.value, oldPath);
+        } else {
+            oldPath.edgeInfos.clear();
+        }
+        oldPath.weight = newWeight;
+        oldPath.edgeInfos.addAll(fromPath.edgeInfos);
+        oldPath.edgeInfos.add(edge.info());
+        return true;
     }
 }
