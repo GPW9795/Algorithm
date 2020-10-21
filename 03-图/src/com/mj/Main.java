@@ -1,7 +1,6 @@
 package com.mj;
 
 import com.mj.graph.Graph;
-import com.mj.graph.Graph.VertexVisitor;
 import com.mj.graph.Graph.EdgeInfo;
 import com.mj.graph.Graph.WeightManager;
 import com.mj.graph.ListGraph;
@@ -26,12 +25,18 @@ public class Main {
         testMst();
     }
 
-    static void testBfs() {
-        Graph<Object, Double> graph = directedGraph(Data.BFS_02);
-        graph.bfs(0, (Object o) -> {
-            System.out.println(o);
-            return false;
-        });
+    static void testMst() {
+        Graph<Object, Double> graph = undirectedGraph(Data.MST_01);
+        Set<EdgeInfo<Object, Double>> infos = graph.mst();
+        for (EdgeInfo<Object, Double> info : infos) {
+            System.out.println(info);
+        }
+    }
+
+    static void testTopo() {
+        Graph<Object, Double> graph = directedGraph(Data.TOPO);
+        List<Object> list = graph.topologicalSort();
+        System.out.println(list);
     }
 
     static void testDfs() {
@@ -42,18 +47,12 @@ public class Main {
         });
     }
 
-    static void testTopo() {
-        Graph<Object, Double> graph = directedGraph(Data.TOPO);
-        List<Object> list = graph.topologicalSort();
-        System.out.println(list);
-    }
-
-    static void testMst() {
-        Graph<Object, Double> graph = undirectedGraph(Data.MST_01);
-        Set<EdgeInfo<Object, Double>> infos = graph.mst();
-        for (EdgeInfo<Object, Double> info : infos) {
-            System.out.println(info);
-        }
+    static void testBfs() {
+        Graph<Object, Double> graph = directedGraph(Data.BFS_02);
+        graph.bfs(0, (Object o) -> {
+            System.out.println(o);
+            return false;
+        });
     }
 
     /**

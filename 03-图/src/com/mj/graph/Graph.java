@@ -1,12 +1,14 @@
 package com.mj.graph;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class Graph<V, E> {
     protected WeightManager<E> weightManager;
 
-    public Graph() {}
+    public Graph() {
+    }
 
     public Graph(WeightManager<E> weightManager) {
         this.weightManager = weightManager;
@@ -33,6 +35,8 @@ public abstract class Graph<V, E> {
     public abstract Set<EdgeInfo<V, E>> mst();
 
     public abstract List<V> topologicalSort();
+
+    public abstract Map<V, E> shortestPath(V begin);
 
     public interface WeightManager<E> {
         int compare(E w1, E w2);

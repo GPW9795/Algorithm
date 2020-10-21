@@ -4,6 +4,7 @@ import com.mj.MinHeap;
 import com.mj.UnionFind;
 
 import java.util.*;
+import java.util.Map.*;
 
 public class ListGraph<V, E> extends Graph<V, E> {
     private Map<V, Vertex<V, E>> vertices = new HashMap<>();
@@ -264,7 +265,7 @@ public class ListGraph<V, E> extends Graph<V, E> {
 
     @Override
     public Set<EdgeInfo<V, E>> mst() {
-        return kruskal();
+        return Math.random() > 0.5 ? prim() : kruskal(); // 随机选择
     }
 
     /**
@@ -353,5 +354,56 @@ public class ListGraph<V, E> extends Graph<V, E> {
         }
 
         return list;
+    }
+
+    @Override
+    public Map<V, E> shortestPath(V begin) {
+        Vertex<V, E> beginVertex = vertices.get(begin);
+        if (beginVertex == null) return null;
+
+        Map<V, E> selectedPaths = new HashMap<>(); // 存放最短路径值
+        Map<Vertex<V, E>, E> paths = new HashMap<>(); // 中间值，每次挑选最小的
+        // 初始化paths
+        for (Edge<V, E> edge : beginVertex.outEdges) {
+            paths.put(edge.to, edge.weight);
+        }
+
+        while (!paths.isEmpty()) {
+            // minEntry离开桌面
+            Entry<Vertex<V, E>, E> minEntry = getMinPath(paths);
+            Vertex<V, E> minVertex = minEntry.getKey();
+            selectedPaths.put(minVertex.value, minEntry.getValue());
+            paths.remove(minVertex);
+            // 对minVertex的outEdges进行松弛操作
+            for (Edge<V, E> edge : minVertex.outEdges) {
+                E newWeight = WeightManager.add(edge.weight,paths.get(edge.to));
+//                if (selectedPaths.containsKey(edge.to.value)) continue;
+//                paths.put(edge.to, edge.weight);
+            }
+        }
+
+        return selectedPaths;
+    }
+
+    /**
+     * 松弛操作
+     */
+    private void relax() {
+
+    }
+
+    /**
+     * 从paths中挑选最小路径(顶点和权值）
+     */
+    private Entry<Vertex<V, E>, E> getMinPath(Map<Vertex<V, E>, E> paths) {
+        Iterator<Entry<Vertex<V, E>, E>> it = paths.entrySet().iterator();
+        Entry<Vertex<V, E>, E> minEntry = it.next();
+        while (it.hasNext()) {
+            Entry<Vertex<V, E>, E> entry = it.next();
+            if (weightManager.compare(entry.getValue(), minEntry.getValue()) < 0) {
+                minEntry = entry;
+            }
+        }
+        return minEntry;
     }
 }
