@@ -27,12 +27,24 @@ public class Main {
     };
 
     public static void main(String[] args) {
-        testShortestPath();
+        testMultiShortestPath();
+    }
+
+    static void testMultiShortestPath() {
+        Graph<Object, Double> graph = directedGraph(Data.NEGATIVE_WEIGHT1);
+        Map<Object, Map<Object, PathInfo<Object, Double>>> map = graph.shortestPath();
+        if (map == null) return;
+        map.forEach((Object from, Map<Object, PathInfo<Object, Double>> paths) -> {
+            System.out.println(from + "----------------------------------------");
+            paths.forEach((Object to, PathInfo<Object, Double> path) -> {
+                System.out.println(to + "-" + path);
+            });
+        });
     }
 
     static void testShortestPath() {
-        Graph<Object, Double> graph = directedGraph(Data.NEGATIVE_WEIGHT2);
-        Map<Object, PathInfo<Object, Double>> map = graph.shortestPath(0);
+        Graph<Object, Double> graph = directedGraph(Data.SP);
+        Map<Object, PathInfo<Object, Double>> map = graph.shortestPath("A");
         if (map == null) return;
         map.forEach((Object o, PathInfo<Object, Double> path) -> {
             System.out.println(o + "-" + path);

@@ -34,9 +34,9 @@ public abstract class Graph<V, E> {
 
     public abstract List<V> topologicalSort();
 
-//    public abstract Map<V, E> shortestPath(V begin);
-
     public abstract Map<V, PathInfo<V, E>> shortestPath(V begin);
+
+    public abstract Map<V, Map<V, PathInfo<V, E>>> shortestPath();
 
     public interface WeightManager<E> {
         int compare(E w1, E w2);
@@ -53,6 +53,13 @@ public abstract class Graph<V, E> {
     public static class PathInfo<V, E> {
         protected E weight;
         protected List<EdgeInfo<V, E>> edgeInfos = new LinkedList<>();
+
+        public PathInfo() {
+        }
+
+        public PathInfo(E weight) {
+            this.weight = weight;
+        }
 
         public E getWeight() {
             return weight;
