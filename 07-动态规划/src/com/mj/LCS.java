@@ -9,8 +9,36 @@ public class LCS {
 
     /**
      * 非递归实现 - 一维数组优化
+     * 根据两数组长度进一步优化
      */
     static int lcs(int[] nums1, int[] nums2) {
+        if (nums1 == null || nums1.length == 0) return 0;
+        if (nums2 == null || nums2.length == 0) return 0;
+        int[] rowsNums = nums1, colsNums = nums2;
+        if (nums1.length < nums2.length) {
+            rowsNums = nums2;
+            colsNums = nums1;
+        }
+        int[] dp = new int[colsNums.length + 1];
+        for (int i = 1; i <= rowsNums.length; i++) {
+            int cur = 0;
+            for (int j = 1; j <= colsNums.length; j++) {
+                int leftTop = cur; // 左上角的值
+                cur = dp[j];
+                if (rowsNums[i - 1] == colsNums[j - 1]) {
+                    dp[j] = leftTop + 1;
+                } else {
+                    dp[j] = Math.max(dp[j], dp[j - 1]);
+                }
+            }
+        }
+        return dp[colsNums.length];
+    }
+
+    /**
+     * 非递归实现 - 一维数组优化
+     */
+    static int lcs4(int[] nums1, int[] nums2) {
         if (nums1 == null || nums1.length == 0) return 0;
         if (nums2 == null || nums2.length == 0) return 0;
         int[] dp = new int[nums2.length + 1];
