@@ -8,9 +8,51 @@ public class LCS {
     }
 
     /**
-     * 非递归实现
+     * 非递归实现 - 滚动数组优化
      */
     static int lcs(int[] nums1, int[] nums2) {
+        if (nums1 == null || nums1.length == 0) return 0;
+        if (nums2 == null || nums2.length == 0) return 0;
+        int[][] dp = new int[2][nums2.length + 1];
+        for (int i = 1; i <= nums1.length; i++) {
+            int row = i & 1;
+            int prevRow = (i - 1) & 1;
+            for (int j = 1; j <= nums2.length; j++) {
+                if (nums1[i - 1] == nums2[j - 1]) {
+                    dp[row][j] = dp[prevRow][j - 1] + 1;
+                } else {
+                    dp[row][j] = Math.max(dp[prevRow][j], dp[row][j - 1]);
+                }
+            }
+        }
+        return dp[nums1.length & 1][nums2.length];
+    }
+
+    /**
+     * 非递归实现 - 滚动数组优化
+     */
+    static int lcs3(int[] nums1, int[] nums2) {
+        if (nums1 == null || nums1.length == 0) return 0;
+        if (nums2 == null || nums2.length == 0) return 0;
+        int[][] dp = new int[2][nums2.length + 1];
+        for (int i = 1; i <= nums1.length; i++) {
+            int row = i & 1;
+            int prevRow = (i - 1) & 1;
+            for (int j = 1; j <= nums2.length; j++) {
+                if (nums1[i - 1] == nums2[j - 1]) {
+                    dp[row][j] = dp[prevRow][j - 1] + 1;
+                } else {
+                    dp[row][j] = Math.max(dp[prevRow][j], dp[row][j - 1]);
+                }
+            }
+        }
+        return dp[nums1.length & 1][nums2.length];
+    }
+
+    /**
+     * 非递归实现
+     */
+    static int lcs2(int[] nums1, int[] nums2) {
         if (nums1 == null || nums1.length == 0) return 0;
         if (nums2 == null || nums2.length == 0) return 0;
         int[][] dp = new int[nums1.length + 1][nums2.length + 1];
@@ -32,20 +74,20 @@ public class LCS {
     static int lcs1(int[] nums1, int[] nums2) {
         if (nums1 == null || nums1.length == 0) return 0;
         if (nums2 == null || nums2.length == 0) return 0;
-        return lcs(nums1, nums1.length, nums2, nums2.length);
+        return lcs1(nums1, nums1.length, nums2, nums2.length);
     }
 
     /**
      * 求nums1前i个元素和nums2前j个元素的最长公共子序列长度
      */
-    static int lcs(int[] nums1, int i, int[] nums2, int j) {
+    static int lcs1(int[] nums1, int i, int[] nums2, int j) {
         if (i == 0 || j == 0) return 0;
         if (nums1[i - 1] != nums2[j - 1]) {
             return Math.max(
-                    lcs(nums1, i, nums2, j - 1),
-                    lcs(nums1, i - 1, nums2, j)
+                    lcs1(nums1, i, nums2, j - 1),
+                    lcs1(nums1, i - 1, nums2, j)
             );
         }
-        return lcs(nums1, i - 1, nums2, j - 1) + 1;
+        return lcs1(nums1, i - 1, nums2, j - 1) + 1;
     }
 }
