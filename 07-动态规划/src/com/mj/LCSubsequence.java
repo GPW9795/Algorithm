@@ -1,6 +1,6 @@
 package com.mj;
 
-public class LCS {
+public class LCSubsequence {
     public static void main(String[] args) {
         int[] nums1 = {1, 4, 5, 9, 10};
         int[] nums2 = {1, 4, 9, 10};
