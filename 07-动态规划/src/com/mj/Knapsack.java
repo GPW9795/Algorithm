@@ -7,7 +7,28 @@ public class Knapsack {
         int[] values = {6, 3, 5, 4, 6};
         int[] weights = {2, 2, 6, 5, 4};
         int capacity = 10;
-        System.out.println(maxValue(values, weights, capacity));
+        System.out.println(selectExactly(values, weights, capacity));
+    }
+
+    /**
+     * 恰好装满
+     */
+    static int selectExactly(int[] values, int[] weights, int capacity) {
+        if (values == null || values.length == 0) return 0;
+        if (weights == null || weights.length == 0) return 0;
+        if (values.length != weights.length) return 0;
+        if (capacity <= 0) return 0;
+        int[] dp = new int[capacity + 1];
+        // 初始化
+        for (int i = 1; i <= capacity; i++) {
+            dp[i] = Integer.MIN_VALUE;
+        }
+        for (int i = 1; i <= values.length; i++) {
+            for (int j = capacity; j >= weights[i - 1]; j--) {
+                dp[j] = Math.max(dp[j], dp[j - weights[i - 1]] + values[i - 1]);
+            }
+        }
+        return dp[capacity] < 0 ? -1 : dp[capacity];
     }
 
     /**
