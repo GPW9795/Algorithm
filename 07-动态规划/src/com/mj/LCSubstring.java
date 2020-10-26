@@ -18,6 +18,10 @@ public class LCSubstring {
         if (cs2.length == 0) return 0;
 
         char[] rowStr = cs1, colStr = cs2;
+        if (cs1.length < cs2.length) {
+            rowStr = cs2;
+            colStr = cs1;
+        }
         int[] dp = new int[colStr.length + 1];
         int max = 0;
         for (int i = 1; i <= rowStr.length; i++) {
