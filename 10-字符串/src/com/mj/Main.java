@@ -8,6 +8,9 @@ public class Main {
         Asserts.test(BruteForce01.indexOf("Hello World", "or") == 7);
         Asserts.test(BruteForce01.indexOf("Hello World", "H") == 0);
         Asserts.test(BruteForce01.indexOf("Hello World", "abc") == -1);
+        Asserts.test(BruteForce02.indexOf("Hello World", "or") == 7);
+        Asserts.test(BruteForce02.indexOf("Hello World", "H") == 0);
+        Asserts.test(BruteForce02.indexOf("Hello World", "abc") == -1);
     }
 
 }
