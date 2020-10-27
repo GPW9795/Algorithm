@@ -29,18 +29,42 @@ public class SkipList<K, V> {
         K key;
         V value;
         Node<K, V>[] nexts;
+
+        public Node() {
+        }
+
+        public Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
     }
 
     public int size() {
         return size;
     }
-    
+
     public boolean isEmpty() {
         return size == 0;
     }
 
     public V put(K key, V value) {
         keyCheck(key);
+
+        Node<K, V> node = first;
+        for (int i = level - 1; i >= 0; i--) {
+            int cmp = -1;
+            while (node.nexts[i] != null && (cmp = compare(key, node.nexts[i].key)) > 0) {
+                node = node.nexts[i];
+            }
+            // 节点是存在的则直接覆盖value
+            if (cmp == 0) {
+                V oldValue = node.nexts[i].value;
+                node.nexts[i].value = value;
+                return oldValue;
+            }
+        }
+        // 添加节点, node为新添加节点的前驱结点
+        Node<K, V> newNode = new Node<>();
         return null;
     }
 
