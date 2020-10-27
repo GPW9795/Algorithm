@@ -11,6 +11,8 @@ public class Main {
         Asserts.test(BruteForce02.indexOf("Hello World", "or") == 7);
         Asserts.test(BruteForce02.indexOf("Hello World", "H") == 0);
         Asserts.test(BruteForce02.indexOf("Hello World", "abc") == -1);
+        Asserts.test(KMP.indexOf("Hello World", "or") == 7);
+        Asserts.test(KMP.indexOf("Hello World", "H") == 0);
+        Asserts.test(KMP.indexOf("Hello World", "abc") == -1);
     }
-
 }
