@@ -25,10 +25,16 @@ public class SkipList<K, V> {
         first.nexts = new Node[MAX_LEVEL];
     }
 
+    private static class Node<K, V> {
+        K key;
+        V value;
+        Node<K, V>[] nexts;
+    }
+
     public int size() {
         return size;
     }
-
+    
     public boolean isEmpty() {
         return size == 0;
     }
@@ -68,11 +74,5 @@ public class SkipList<K, V> {
 
     private int compare(K k1, K k2) {
         return comparator != null ? comparator.compare(k1, k2) : ((Comparable<K>) k1).compareTo(k2);
-    }
-
-    private static class Node<K, V> {
-        K key;
-        V value;
-        Node<K, V>[] nexts;
     }
 }
