@@ -67,7 +67,6 @@ public class BloomFilter<T> {
         int hash1 = value.hashCode();
         int hash2 = hash1 >>> 16;
 
-        boolean result = false;
         for (int i = 1; i <= hashSize; i++) {
             int combinedHash = hash1 + (i * hash2);
             if (combinedHash < 0) {
